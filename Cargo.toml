@@ -1,9 +1,9 @@
 [workspace]
 members = [
   "crates/btree", # bubble-up btree
-  # proactive splitting btree
-  # arena btree
-  "crates/bplustree"
+  # "crates/p-btree", # proactive splitting btree
+  # "crates/a-btree", # arena btree
+  "crates/bplustree", # reference b+tree
 ]
 resolver = "3"
 

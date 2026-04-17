@@ -1,5 +1,5 @@
 {
-  description = "Flake to manage my Terraform workspace.";
+  description = "Flake to manage my Rust workspace.";
   inputs.nixpkgs.url = "nixpkgs/nixpkgs-unstable";
   inputs.flake-parts.url = "github:hercules-ci/flake-parts";
   inputs.rust-overlay = {
