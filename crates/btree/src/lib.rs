@@ -86,14 +86,14 @@ impl BTree {
             root.insert(key, value)?
         };
         if let Some(mutated) = mutated {
-            if mutated.borrow().keys().len() >= self.order {
+            if mutated.borrow().is_overflown(self.order) {
                 self.handle_overflow(mutated)
             } else {
                 Ok(())
             }
         } else {
             #[allow(clippy::collapsible_else_if)]
-            if self.root.borrow().keys().len() >= self.order {
+            if self.root.borrow().is_overflown(self.order) {
                 self.handle_overflow(self.root.clone())
             } else {
                 Ok(())
@@ -102,7 +102,7 @@ impl BTree {
     }
     fn handle_overflow(&mut self, node: Link<Node>) -> Result<(), BtreeOperationError> {
         // Given node [a, b, c], the median is b, and the new node will be [c], and the original node will be [a]
-        let (new_node, key, value) = node.borrow_mut().split();
+        let (new_node, (key, value)) = node.borrow_mut().split();
         // parent of the node being split will be the parent of the new node
         let parent = node.borrow().parent.clone();
         match (parent, new_node) {
@@ -113,10 +113,12 @@ impl BTree {
                     Ok(idx) => Err(BtreeOperationError::KeyAlreadyExists(idx)),
                     Err(idx) => Ok(idx),
                 }?;
+                // bubble up the median key and value to the parent node,
+                // and insert the new node as the child of the parent node
                 parent.borrow_mut().children.insert(idx + 1, new_node);
                 parent.borrow_mut().keys.insert(idx, key);
                 parent.borrow_mut().values.insert(idx, value);
-                if parent.borrow().keys().len() >= self.order {
+                if parent.borrow().is_overflown(self.order) {
                     self.handle_overflow(parent)
                 } else {
                     Ok(())
@@ -177,6 +179,10 @@ impl Node {
     }
     pub fn is_empty(&self) -> bool {
         self.keys().is_empty()
+    }
+
+    pub fn is_overflown(&self, order: usize) -> bool {
+        self.keys().len() >= order
     }
     pub fn append(&mut self, key: i32, value: &str) {
         self.insert_keys(&[key]);
@@ -241,7 +247,7 @@ impl Node {
         self.keys.len()
     }
     /// Returns the new node, the median key and the median value for the parent node
-    fn split(&mut self) -> (Link<Node>, i32, String) {
+    fn split(&mut self) -> (Link<Node>, (i32, String)) {
         let median_idx = self.len() / 2;
         let median_key = self.keys[median_idx];
         let median_value = &self.values[median_idx].to_string();
@@ -279,7 +285,7 @@ impl Node {
         } else {
             Rc::new(RefCell::new(new_empty))
         };
-        (sibling, median_key, median_value.to_string())
+        (sibling, (median_key, median_value.to_string()))
     }
     pub fn search(&self, key: i32) -> Option<String> {
         let node = self;
