@@ -1,0 +1,9 @@
+[package]
+name = "pbtree"
+version = "0.1.0"
+edition.workspace = true
+authors = ["110416 <contact.110416@gmail.com>"]
+description = "A B tree implementation for Rust using topdown proactive splitting approach"
+
+[dependencies]
+prelude = { path = "../prelude" }

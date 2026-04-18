@@ -1,7 +1,8 @@
 [workspace]
 members = [
+  "crates/prelude", # utilities
   "crates/btree", # bubble-up btree
-  # "crates/p-btree", # proactive splitting btree
+  "crates/p-btree", # proactive splitting btree
   # "crates/a-btree", # arena btree
   "crates/bplustree", # reference b+tree
 ]
