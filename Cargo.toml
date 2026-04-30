@@ -5,10 +5,13 @@ members = [
   "crates/btree",     # bubble-up btree
   "crates/p-btree",   # proactive splitting btree
   # TODO "crates/a-btree", # arena btree whose data is stored in continuous memory location
-  "crates/naivedb", # naive db implementation based on relly tutorial
-  # "crates/bplustree", # reference B+ tree implementation from relly(Copyright (c) 2021 Hidekazu Kobayashi <kobahide789@gmail.com>)
+  "crates/naivedb-kernel", # naive db implementation based on relly tutorial
+  "crates/naivedb-bplustree-storage", # reference B+ tree implementation from relly(Copyright (c) 2021 Hidekazu Kobayashi <kobahide789@gmail.com>)
 ]
 resolver = "3"
 
 [workspace.package]
 edition = "2024"
+
+[workspace.dependencies]
+zerocopy = "0.3"

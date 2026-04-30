@@ -4,8 +4,14 @@ use std::{
     path::Path,
 };
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
-pub struct PageId(u64);
+use zerocopy::{AsBytes, FromBytes};
+
+// data structure to store variable length data into fixed size pages
+pub mod slotted;
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, FromBytes, AsBytes)]
+#[repr(C)]
+pub struct PageId(pub u64);
 
 pub type Page = [u8; DiskManager::PAGE_SIZE];
 

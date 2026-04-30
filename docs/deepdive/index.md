@@ -8,3 +8,42 @@ Q: Why `page_table` is `HashMap<PageId, BufferId>` instad of `HashMap<PageId, Pa
 
 It seems we want to store data in consecutive memory location for cache locality.
 
+Q: How to store data in B+ tree?
+
+B+tree determines where to store data and slotted data structure defines how to store the data.
+
+B+tree identifies a page to store a key-value pair. As both key and value are in variable length,
+we want to efficiently store variable length data into fixed size pages.
+"Slot table" covers this uscase.
+
+```
++---------------------------------------------------------------+
+| PAGE HEADER (Checksum, Free Space Pointer, Slot Count)        |
++---------------------------------------------------------------+
+
+| Slot 0 (Offset: 480, Len: 20) | Slot 1 (Offset: 450, Len: 30) |
++---------------------------------------------------------------+
+| Slot 2 (Offset: 400, Len: 50) | ... (Empty Slots)             |
++---------------------------------------------------------------+
+|                                                               |
+|                         FREE SPACE                            |
+|                                                               |
++---------------------------------------------------------------+
+| <------ Data for Slot 2 ------- | <--- Data for Slot 1 ------ |
++---------------------------------------------------------------+
+| <------- Data for Slot 0 ------------------------------------>|
++---------------------------------------------------------------+
+```
+
+The page header points to the free space start and the free space end.
+
+> The header region stores metadata about the page and always start at the beginning of the page. It holds information like the page id, B-tree node type (root, interior, leaf), and the start and end of the free space region. It’s also common to include things like a magic number, version number, a checksum to protect against data corruption, bit flags to indicate things like compression, sibling page ids, etc.
+
+- https://siemens.blog/posts/database-page-layout/
+
+Q: How search works?
+
+search returns a sequence of buffers(page_id, page, etc.)
+
+Data is not loaded until necessary. Leaf type and Branch type work as a typed-facade to
+underlying data(zero copy abstraction).

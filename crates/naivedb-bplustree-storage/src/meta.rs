@@ -1,6 +1,5 @@
+use naivedb_kernel::disk::PageId;
 use zerocopy::{AsBytes, ByteSlice, FromBytes, LayoutVerified};
-
-use crate::disk::PageId;
 
 #[derive(Debug, FromBytes, AsBytes)]
 #[repr(C)]

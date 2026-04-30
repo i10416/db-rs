@@ -1,4 +1,5 @@
-use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, LayoutVerified};
+use zerocopy::{AsBytes, FromBytes};
+use zerocopy::{ByteSlice, ByteSliceMut, LayoutVerified};
 
 use super::branch::Branch;
 use super::leaf::Leaf;

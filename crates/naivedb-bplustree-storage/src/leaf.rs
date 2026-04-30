@@ -1,11 +1,10 @@
 use std::mem::size_of;
 
+use naivedb_kernel::disk::PageId;
 use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, LayoutVerified};
 
 use super::Pair;
 use prelude::traversal::binary_search_by;
-use crate::disk::PageId;
-use crate::slotted::{self, Slotted};
 
 #[derive(Debug, FromBytes, AsBytes)]
 #[repr(C)]

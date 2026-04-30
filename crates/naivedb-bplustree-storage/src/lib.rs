@@ -3,12 +3,11 @@ use std::convert::identity;
 use std::rc::Rc;
 
 use bincode::Options;
+use naivedb_kernel::disk::PageId;
+use naivedb_kernel::inmemory::{self, Buffer, BufferPoolManager};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use zerocopy::{AsBytes, ByteSlice};
-
-use crate::buffer::{self, Buffer, BufferPoolManager};
-use crate::disk::PageId;
 
 mod branch;
 mod leaf;
@@ -36,7 +35,7 @@ pub enum Error {
     #[error("duplicate key")]
     DuplicateKey,
     #[error(transparent)]
-    Buffer(#[from] buffer::Error),
+    Buffer(#[from] inmemory::Error),
 }
 
 #[derive(Debug, Clone)]
@@ -283,9 +282,8 @@ impl Iter {
 
 #[cfg(test)]
 mod tests {
+    use naivedb_kernel::{disk::DiskManager, inmemory::BufferPool};
     use tempfile::tempfile;
-
-    use crate::{buffer::BufferPool, disk::DiskManager};
 
     use super::*;
     #[test]
