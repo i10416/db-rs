@@ -1,0 +1,75 @@
+use std::{
+    fs::{File, OpenOptions},
+    io::{self, Read, Seek, SeekFrom, Write},
+    path::Path,
+};
+
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+pub struct PageId(u64);
+
+pub type Page = [u8; DiskManager::PAGE_SIZE];
+
+impl PageId {
+    pub fn to_u64(&self) -> u64 {
+        self.0
+    }
+}
+impl From<PageId> for u64 {
+    fn from(value: PageId) -> Self {
+        value.0
+    }
+}
+
+pub struct DiskManager {
+    // File performs disk I/O caching on read and write, but it is still slow.
+    // On Linux platform, std::os::unix::fs::OpenOptionsExt provides a way to
+    // disable disk I/O caching via `custom_flags(O_DIRECT)`;
+    heap_file: File,
+    next_page_id: u64,
+}
+
+impl DiskManager {
+    const PAGE_SIZE: usize = 4096;
+    ///
+    /// ```txt
+    /// heap_file: | page 0 | page 1 | ... | page N-1 |
+    /// ```
+    ///
+    pub fn new(heap_file: File) -> io::Result<Self> {
+        let size = heap_file.metadata()?.len();
+        // every operation is performed per page, so it is safe to assume that
+        // size is divisible by PAGE_SIZE.
+        let next_page_id = size / Self::PAGE_SIZE as u64;
+        Ok(Self {
+            heap_file,
+            next_page_id,
+        })
+    }
+    pub fn open(data_file_path: impl AsRef<Path>) -> io::Result<Self> {
+        let file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(data_file_path)?;
+        Self::new(file)
+    }
+
+    pub fn allocate_page(&mut self) -> PageId {
+        let page_id = self.next_page_id;
+        self.next_page_id += 1;
+        PageId(page_id)
+    }
+    pub fn read_page_data(&mut self, page_id: PageId, data: &mut [u8]) -> io::Result<()> {
+        let offset = Self::PAGE_SIZE as u64 * page_id.to_u64();
+        self.heap_file.seek(SeekFrom::Start(offset))?;
+        // NOTE:
+        // Rust has read_exact_at under os::unix::fs::FileExt namespace which allows us to read data in a single step.
+        // On Windows platform, it does move the cursor first and then read the data.
+        self.heap_file.read_exact(data)
+    }
+    pub fn write_page_data(&mut self, page_id: PageId, data: &[u8]) -> io::Result<()> {
+        let offset = Self::PAGE_SIZE as u64 * page_id.to_u64();
+        self.heap_file.seek(SeekFrom::Start(offset))?;
+        self.heap_file.write_all(data)
+    }
+}

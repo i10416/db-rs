@@ -1,0 +1,11 @@
+[package]
+name = "naivedb"
+version = "0.1.0"
+edition.workspace = true
+authors = ["110416 <contact.110416@gmail.com>"]
+description = "Naive DB implementation based on Relly"
+
+[dependencies]
+prelude = { path = "../prelude" }
+thiserror = "1.0"
+# bplustree = { path = "../bplustree" }
