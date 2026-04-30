@@ -6,3 +6,10 @@ authors = ["110416 <contact.110416@gmail.com>"]
 description = "A B+ tree implementation for Rust"
 
 [dependencies]
+zerocopy = "0.3"
+bincode = "1.3"
+thiserror = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+prelude = { path = "../prelude" }
+[dev-dependencies]
+tempfile = "3.1"

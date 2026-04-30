@@ -1,10 +1,11 @@
 [workspace]
 members = [
-  "crates/prelude", # utilities
-  "crates/btree", # bubble-up btree
-  "crates/p-btree", # proactive splitting btree
-  # "crates/a-btree", # arena btree
-  "crates/bplustree", # reference b+tree
+  "crates/prelude",   # utilities
+  # a variety of naive btree implementations that demonstrate performance implication and implementation complexity
+  "crates/btree",     # bubble-up btree
+  "crates/p-btree",   # proactive splitting btree
+  # TODO "crates/a-btree", # arena btree whose data is stored in continuous memory location
+  "crates/bplustree", # reference B+ tree implementation from relly(Copyright (c) 2021 Hidekazu Kobayashi <kobahide789@gmail.com>)
 ]
 resolver = "3"
 
