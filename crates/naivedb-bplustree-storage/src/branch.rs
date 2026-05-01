@@ -1,5 +1,3 @@
-use std::mem::size_of;
-
 use naivedb_kernel::disk::{PageId, slotted::Slotted};
 use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, LayoutVerified};
 
@@ -60,7 +58,7 @@ impl<B: ByteSlice> Branch<B> {
     }
 
     pub fn max_pair_size(&self) -> usize {
-        self.body.capacity() / 2 - size_of::<slotted::Pointer>()
+        self.body.capacity() / 2 - Slotted::<()>::size_of_ptr()
     }
 }
 

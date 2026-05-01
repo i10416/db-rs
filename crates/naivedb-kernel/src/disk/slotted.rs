@@ -1,10 +1,16 @@
-use std::ops::{Index, Range};
+use std::ops::{Index, IndexMut, Range};
 
 use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, LayoutVerified};
 
 pub struct Slotted<B> {
     header: LayoutVerified<B, Header>,
     body: B,
+}
+
+impl<T> Slotted<T> {
+    pub fn size_of_ptr() -> usize {
+        size_of::<Ptr>()
+    }
 }
 
 // typed, read only view to underlying bytes
@@ -25,16 +31,12 @@ impl<B: ByteSlice> Slotted<B> {
         self.header.num_slots as usize
     }
 
-    pub fn free_spaces(&self) -> usize {
+    pub fn free_space(&self) -> usize {
         self.header.free_space_end as usize - self.size_of_pointers()
     }
 
     pub(crate) fn pointers(&self) -> Pointers<&[u8]> {
         Pointers::new_slice(&self.body[..self.size_of_pointers()]).unwrap()
-    }
-
-    pub fn size_of_ptr() -> usize {
-        size_of::<Ptr>()
     }
 
     fn size_of_pointers(&self) -> usize {
@@ -50,6 +52,10 @@ impl<B: ByteSlice> Slotted<B> {
 //    - remove: invalidate a pointer (and remove the pointed data?)
 // - compact/fill the vacant spaces
 impl<B: ByteSliceMut> Slotted<B> {
+    pub fn initialize(&mut self) {
+        self.header.num_slots = 0;
+        self.header.free_space_end = self.body.len() as _;
+    }
     fn pointers_mut(&mut self) -> Pointers<&mut [u8]> {
         let pointers_size = self.size_of_pointers();
         Pointers::new_slice(&mut self.body[..pointers_size]).unwrap()
@@ -58,7 +64,7 @@ impl<B: ByteSliceMut> Slotted<B> {
     // a new pointer(`pointers[index]`) points to a new slot of size = `size`.
     // At this point, the slot is not filled yet.
     pub fn insert(&mut self, index: usize, len: usize) -> Option<()> {
-        if self.free_spaces() >= Self::size_of_ptr() + len {
+        if self.free_space() >= Self::size_of_ptr() + len {
             self.header.free_space_end -= len as u16;
             let free_space_offset = self.header.free_space_end;
             let num_slots = self.num_slots();
@@ -75,9 +81,13 @@ impl<B: ByteSliceMut> Slotted<B> {
             None
         }
     }
+    fn data_mut(&mut self, pointer: Ptr) -> &mut [u8] {
+        &mut self.body[pointer.range()]
+    }
+
     // mutate the internal state such that
     // a pointer(`pointers[index]`) is dropped and no space is vacant
-    fn remove(&mut self, index: usize) {
+    pub fn remove(&mut self, index: usize) {
         self.resize(index, 0);
         self.pointers_mut().copy_within(index + 1.., index);
         self.header.num_slots -= 1;
@@ -92,7 +102,7 @@ impl<B: ByteSliceMut> Slotted<B> {
         let diff = len_new as isize - original_size;
         if original_size == len_new as isize {
             Some(())
-        } else if diff > self.free_spaces() as isize {
+        } else if diff > self.free_space() as isize {
             None
         } else {
             let next_free_space_end = self.header.free_space_end as isize - diff;
@@ -123,6 +133,12 @@ impl<B: ByteSlice> Index<usize> for Slotted<B> {
     type Output = [u8];
     fn index(&self, index: usize) -> &Self::Output {
         self.data(self.pointers()[index])
+    }
+}
+
+impl<B: ByteSliceMut> IndexMut<usize> for Slotted<B> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        self.data_mut(self.pointers()[index])
     }
 }
 
