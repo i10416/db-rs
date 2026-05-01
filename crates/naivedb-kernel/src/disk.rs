@@ -34,6 +34,7 @@ impl Default for PageId {
         Self::INVALID_PAGE_ID
     }
 }
+
 impl From<Option<PageId>> for PageId {
     fn from(page_id: Option<PageId>) -> Self {
         page_id.unwrap_or_default()

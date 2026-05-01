@@ -157,7 +157,9 @@ impl BufferPool {
     fn size(&self) -> usize {
         self.buffers.len()
     }
-    // returns None if no buffer space is available
+    // It returns the buffer id to be evicted. The buffer identified by the id
+    // could be uninitialized(page id is `PageId::INVALID_PAGE_ID`) or dirty.
+    // It returns None if no buffer space is available.
     pub fn evict(&mut self) -> Option<BufferId> {
         let pool_size = self.size();
         let mut consecutive_pinned = 0;
