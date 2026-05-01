@@ -1,6 +1,6 @@
 use std::mem::size_of;
 
-use naivedb_kernel::disk::PageId;
+use naivedb_kernel::disk::{PageId, slotted::Slotted};
 use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, LayoutVerified};
 
 use super::Pair;

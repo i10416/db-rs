@@ -40,10 +40,30 @@ The page header points to the free space start and the free space end.
 > The header region stores metadata about the page and always start at the beginning of the page. It holds information like the page id, B-tree node type (root, interior, leaf), and the start and end of the free space region. It’s also common to include things like a magic number, version number, a checksum to protect against data corruption, bit flags to indicate things like compression, sibling page ids, etc.
 
 - https://siemens.blog/posts/database-page-layout/
+- https://rabbitfoot141.hatenablog.com/entry/2019/12/03/000000#Tuple-Oriented
+
+
+In B+tree, we store `key -> [u8] as PageId` in branch nodes and `key -> [u8]` in leaf nodes by slot_id, which is an index of pointer in slotted table looked up by key .
+
+
+Q: How zerocopy works?
+
+```rs
+pub struct Slotted<B> {
+    // This creates a typed, read-only view to underlying bytes
+    // without instantiating actual `Header` type
+    header: LayoutVerified<B, Header>,
+    body: B,
+}
+```
+
+Q: Why Ptr has a `_pad` to fill 64 bytes?
+
+???
 
 Q: How search works?
 
 search returns a sequence of buffers(page_id, page, etc.)
 
-Data is not loaded until necessary. Leaf type and Branch type work as a typed-facade to
+Data is not loaded until necessary. Node type, Leaf type and Branch type work as a typed-facade to
 underlying data(zero copy abstraction).
