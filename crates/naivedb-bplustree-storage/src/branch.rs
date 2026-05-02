@@ -53,7 +53,7 @@ impl<B: ByteSlice> Branch<B> {
         }
     }
 
-    pub fn pair_at(&self, slot_id: usize) -> Pair {
+    pub fn pair_at(&'_ self, slot_id: usize) -> Pair<'_> {
         Pair::from_bytes(&self.body[slot_id])
     }
 

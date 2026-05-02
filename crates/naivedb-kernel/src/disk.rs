@@ -8,6 +8,7 @@ use zerocopy::{AsBytes, FromBytes};
 
 // data structure to store variable length data into fixed size pages
 pub mod slotted;
+pub mod tuple;
 
 #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, FromBytes, AsBytes)]
 #[repr(C)]
