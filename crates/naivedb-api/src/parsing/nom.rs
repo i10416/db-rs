@@ -34,7 +34,12 @@ mod tests {
     fn parse_select() {
         let q = "SELECT * FROM t1";
         let (_, q) = parse(q).unwrap();
-        assert_eq!(q, Query::Select(SelectStatement { from_table: "t1".into() }))
+        assert_eq!(
+            q,
+            Query::Select(SelectStatement {
+                from_table: "t1".into()
+            })
+        )
     }
 }
 

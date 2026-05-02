@@ -56,6 +56,8 @@ impl Lexer {
             "SELECT" => Token::Select,
             "WHERE" => Token::Where,
             "FROM" => Token::From,
+            "TRUE" => Token::BoolLiteral(true),
+            "FALSE" => Token::BoolLiteral(false),
             _ => Token::Ident(buf),
         };
         Ok(tkn)
@@ -96,14 +98,15 @@ impl Lexer {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Token {
     Select,
     From,
     Where,
     Asterisk,
     Ident(String),
-    LitString(String),
+    StringLiteral(String),
+    BoolLiteral(bool),
     // ops
     Eq,
     Eof,
@@ -138,6 +141,24 @@ mod tests {
                 Token::Asterisk,
                 Token::From,
                 Token::Ident("t1".into()),
+                Token::Eof
+            ])
+        )
+    }
+    #[test]
+    fn lexing_simple_select_statement_with_where_clause() {
+        let q = "SELECT * FROM t1 WHERE true";
+        let mut lex = Lexer::new(q.chars().into_iter().collect());
+        let result = lex.tokenize();
+        assert_eq!(
+            result,
+            Ok(vec![
+                Token::Select,
+                Token::Asterisk,
+                Token::From,
+                Token::Ident("t1".into()),
+                Token::Where,
+                Token::BoolLiteral(true),
                 Token::Eof
             ])
         )
