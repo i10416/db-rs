@@ -1,0 +1,10 @@
+[package]
+name = "naivedb_api"
+version = "0.1.0"
+edition.workspace = true
+authors = ["110416 <contact.110416@gmail.com>"]
+description = "Naive DB API"
+
+[dependencies]
+nom = "8.0.0"
+prelude = { path = "../prelude" }
