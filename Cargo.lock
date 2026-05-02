@@ -160,6 +160,7 @@ name = "naivedb"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "naivedb_api",
  "naivedb_bplustree_storage",
  "naivedb_kernel",
  "prelude",

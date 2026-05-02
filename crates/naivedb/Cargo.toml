@@ -12,3 +12,4 @@ anyhow = "1.0"
 prelude = { path = "../prelude" }
 naivedb_kernel = { path = "../naivedb-kernel" }
 naivedb_bplustree_storage = { path = "../naivedb-bplustree-storage" }
+naivedb_api = { path = "../naivedb-api" }

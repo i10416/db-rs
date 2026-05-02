@@ -17,7 +17,7 @@ type ParseResult<'a, T> = IResult<RawSpan<'a>, T>;
 pub struct SelectStatement {
     // always select all for now
     // cols: ...,
-    table: String, // only one table is allowed for from clause
+    pub table: String, // only one table is allowed for from clause
 }
 pub fn parse<'a>(s: RawSpan<'a>) -> ParseResult<'a, Query> {
     (
