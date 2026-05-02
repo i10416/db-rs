@@ -43,8 +43,12 @@ The page header points to the free space start and the free space end.
 - https://rabbitfoot141.hatenablog.com/entry/2019/12/03/000000#Tuple-Oriented
 
 
-In B+tree, we store `key -> [u8] as PageId` in branch nodes and `key -> [u8]` in leaf nodes by slot_id, which is an index of pointer in slotted table looked up by key .
+In B+tree, we store `(key -> [u8] as PageId)` in branch nodes and `(key -> [u8])` in leaf nodes by slot_id, which is an index of pointer in slotted table looked up by key.
+The signiture of look up operation is `key => slot_id => value in the slot`.
 
+To be more precise, key is a non-empty list of non-empty byte sequences encoded in memcmpable format(`memcmpable::encode: [[u8]] => [u8] ^ ordering`)
+where `^ ordering` indicates the resulting byte array is sensibly sortable
+while the original list of byte sequences is not sensibly sortable.
 
 Q: How zerocopy works?
 
