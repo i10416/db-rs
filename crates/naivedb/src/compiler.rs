@@ -6,7 +6,7 @@ use crate::query::{PlanNode, SeqScan, TupleSearchMode};
 pub fn compiler(q: Query) -> Box<dyn PlanNode> {
     match q {
         // select everything from the table
-        Query::Select(SelectStatement { table }) => Box::new(SeqScan {
+        Query::Select(SelectStatement { from_table: table }) => Box::new(SeqScan {
             table_meta_page_id: look_up_page_id_by_table_name(&table),
             search_mode: TupleSearchMode::Start,
             while_cond: &|_| true,

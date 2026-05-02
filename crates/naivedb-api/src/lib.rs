@@ -7,7 +7,10 @@ pub enum Query {
 
 #[derive(Debug, PartialEq)]
 pub struct SelectStatement {
-    // always select all for now
-    // cols: ...,
-    pub table: String, // only one table is allowed for from clause
+    // always select all columns in this implementation
+    // cols: ...
+    // ---
+    // only one table is allowed for from clause in this implementation
+    pub from_table: String,
+    // where_clause: Option<_>
 }

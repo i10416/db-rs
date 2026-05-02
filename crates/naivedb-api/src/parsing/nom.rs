@@ -16,7 +16,7 @@ pub fn parse<'a>(s: RawSpan<'a>) -> ParseResult<'a, Query> {
         multispace1,
         identifier,
     )
-        .map(|(_, _, _, _, _, _, ident)| Query::Select(SelectStatement { table: ident }))
+        .map(|(_, _, _, _, _, _, ident)| Query::Select(SelectStatement { from_table: ident }))
         .parse(s)
 }
 
@@ -34,7 +34,7 @@ mod tests {
     fn parse_select() {
         let q = "SELECT * FROM t1";
         let (_, q) = parse(q).unwrap();
-        assert_eq!(q, Query::Select(SelectStatement { table: "t1".into() }))
+        assert_eq!(q, Query::Select(SelectStatement { from_table: "t1".into() }))
     }
 }
 
