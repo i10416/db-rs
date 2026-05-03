@@ -16,4 +16,4 @@ resolver = "3"
 edition = "2024"
 
 [workspace.dependencies]
-zerocopy = "0.3"
+zerocopy = { version = "0.7", features = ["derive"] }

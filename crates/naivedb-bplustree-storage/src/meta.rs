@@ -1,7 +1,7 @@
 use naivedb_kernel::disk::PageId;
-use zerocopy::{AsBytes, ByteSlice, FromBytes, LayoutVerified};
+use zerocopy::{AsBytes, ByteSlice, FromBytes, FromZeroes, LayoutVerified};
 
-#[derive(Debug, FromBytes, AsBytes)]
+#[derive(Debug, FromZeroes, FromBytes, AsBytes)]
 #[repr(C)]
 pub struct Header {
     pub root_page_id: PageId,

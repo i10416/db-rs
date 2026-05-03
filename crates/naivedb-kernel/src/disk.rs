@@ -4,13 +4,13 @@ use std::{
     path::Path,
 };
 
-use zerocopy::{AsBytes, FromBytes};
+use zerocopy::{AsBytes, FromBytes, FromZeroes};
 
 // data structure to store variable length data into fixed size pages
 pub mod slotted;
 pub mod tuple;
 
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, FromBytes, AsBytes)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, FromZeroes, FromBytes, AsBytes)]
 #[repr(C)]
 pub struct PageId(pub u64);
 

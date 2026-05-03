@@ -1,10 +1,10 @@
 use naivedb_kernel::disk::{PageId, slotted::Slotted};
-use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, LayoutVerified};
+use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, FromZeroes, LayoutVerified};
 
 use super::Pair;
 use prelude::traversal::binary_search_by;
 
-#[derive(Debug, FromBytes, AsBytes)]
+#[derive(Debug, FromZeroes, FromBytes, AsBytes)]
 #[repr(C)]
 pub struct Header {
     prev_page_id: PageId,

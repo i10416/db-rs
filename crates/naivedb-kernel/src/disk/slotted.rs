@@ -1,6 +1,6 @@
 use std::ops::{Index, IndexMut, Range};
 
-use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, LayoutVerified};
+use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, FromZeroes, LayoutVerified};
 
 pub struct Slotted<B> {
     header: LayoutVerified<B, Header>,
@@ -153,7 +153,7 @@ impl<B: ByteSliceMut> IndexMut<usize> for Slotted<B> {
 pub(crate) type Pointers<B> = LayoutVerified<B, [Ptr]>;
 
 // a pointer to positive size bytes in a byte sequence
-#[derive(Debug, FromBytes, AsBytes, Clone, Copy)]
+#[derive(Debug, FromZeroes, FromBytes, AsBytes, Clone, Copy)]
 #[repr(C)]
 pub(crate) struct Ptr {
     offset: u16,
@@ -167,7 +167,7 @@ impl Ptr {
     }
 }
 
-#[derive(Debug, FromBytes, AsBytes)]
+#[derive(Debug, FromZeroes, FromBytes, AsBytes)]
 #[repr(C)]
 pub struct Header {
     free_space_start: u16,

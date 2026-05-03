@@ -1,4 +1,4 @@
-use zerocopy::{AsBytes, FromBytes};
+use zerocopy::{AsBytes, FromBytes, FromZeroes};
 use zerocopy::{ByteSlice, ByteSliceMut, LayoutVerified};
 
 use super::branch::Branch;
@@ -7,7 +7,7 @@ use super::leaf::Leaf;
 pub const NODE_TYPE_LEAF: [u8; 8] = *b"LEAF    ";
 pub const NODE_TYPE_BRANCH: [u8; 8] = *b"BRANCH  ";
 
-#[derive(Debug, FromBytes, AsBytes)]
+#[derive(Debug, FromZeroes, FromBytes, AsBytes)]
 #[repr(C)]
 pub struct Header {
     pub node_type: [u8; 8],
