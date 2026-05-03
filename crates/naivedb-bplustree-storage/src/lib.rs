@@ -21,11 +21,11 @@ pub struct Pair<'a> {
 }
 
 impl<'a> Pair<'a> {
-    fn to_bytes(&self) -> Vec<u8> {
+    pub fn to_bytes(&self) -> Vec<u8> {
         bincode::options().serialize(self).unwrap()
     }
 
-    fn from_bytes(bytes: &'a [u8]) -> Self {
+    pub fn from_bytes(bytes: &'a [u8]) -> Self {
         bincode::options().deserialize(bytes).unwrap()
     }
 }

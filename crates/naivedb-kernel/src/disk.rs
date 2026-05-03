@@ -65,6 +65,10 @@ pub struct DiskManager {
 
 impl DiskManager {
     pub const PAGE_SIZE: usize = 4096;
+
+    pub fn page_count(&self) -> usize {
+        (self.next_page_id - 1) as usize
+    }
     ///
     /// ```txt
     /// heap_file: | page 0 | page 1 | ... | page N-1 |
