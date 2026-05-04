@@ -1,9 +1,9 @@
 use std::ops::{Index, IndexMut, Range};
 
-use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, FromZeroes, LayoutVerified};
+use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, FromZeroes, Ref};
 
 pub struct Slotted<B> {
-    header: LayoutVerified<B, Header>,
+    header: Ref<B, Header>,
     body: B,
 }
 
@@ -16,7 +16,7 @@ impl<T> Slotted<T> {
 // typed, read only view to underlying bytes
 impl<B: ByteSlice> Slotted<B> {
     pub fn new(bytes: B) -> Self {
-        let (header, body) = LayoutVerified::new_from_prefix(bytes).expect("ok");
+        let (header, body) = Ref::new_from_prefix(bytes).expect("ok");
         Self { header, body }
     }
 
@@ -150,7 +150,7 @@ impl<B: ByteSliceMut> IndexMut<usize> for Slotted<B> {
 // let ptr = items[0];
 // ```
 //
-pub(crate) type Pointers<B> = LayoutVerified<B, [Ptr]>;
+pub(crate) type Pointers<B> = Ref<B, [Ptr]>;
 
 // a pointer to positive size bytes in a byte sequence
 #[derive(Debug, FromZeroes, FromBytes, AsBytes, Clone, Copy)]

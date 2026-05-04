@@ -1,5 +1,5 @@
 use naivedb_kernel::disk::{PageId, slotted::Slotted};
-use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, FromZeroes, LayoutVerified};
+use zerocopy::{AsBytes, ByteSlice, ByteSliceMut, FromBytes, FromZeroes, Ref};
 
 use super::Pair;
 use prelude::traversal::binary_search_by;
@@ -11,14 +11,13 @@ pub struct Header {
 }
 
 pub struct Branch<B> {
-    header: LayoutVerified<B, Header>,
+    header: Ref<B, Header>,
     body: Slotted<B>,
 }
 
 impl<B: ByteSlice> Branch<B> {
     pub fn new(bytes: B) -> Self {
-        let (header, body) =
-            LayoutVerified::new_from_prefix(bytes).expect("branch header must be aligned");
+        let (header, body) = Ref::new_from_prefix(bytes).expect("branch header must be aligned");
         let body = Slotted::new(body);
         Self { header, body }
     }

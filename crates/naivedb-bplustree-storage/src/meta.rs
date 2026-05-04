@@ -1,5 +1,5 @@
 use naivedb_kernel::disk::PageId;
-use zerocopy::{AsBytes, ByteSlice, FromBytes, FromZeroes, LayoutVerified};
+use zerocopy::{AsBytes, ByteSlice, FromBytes, FromZeroes, Ref};
 
 #[derive(Debug, FromZeroes, FromBytes, AsBytes)]
 #[repr(C)]
@@ -8,14 +8,13 @@ pub struct Header {
 }
 
 pub struct Meta<B> {
-    pub header: LayoutVerified<B, Header>,
+    pub header: Ref<B, Header>,
     _unused: B,
 }
 
 impl<B: ByteSlice> Meta<B> {
     pub fn new(bytes: B) -> Self {
-        let (header, _unused) =
-            LayoutVerified::new_from_prefix(bytes).expect("meta page must be aligned");
+        let (header, _unused) = Ref::new_from_prefix(bytes).expect("meta page must be aligned");
         Self { header, _unused }
     }
 }

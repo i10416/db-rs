@@ -1,5 +1,5 @@
-use zerocopy::{AsBytes, FromBytes, FromZeroes};
-use zerocopy::{ByteSlice, ByteSliceMut, LayoutVerified};
+use zerocopy::{AsBytes, FromBytes, FromZeroes, Ref};
+use zerocopy::{ByteSlice, ByteSliceMut};
 
 use super::branch::Branch;
 use super::leaf::Leaf;
@@ -14,13 +14,13 @@ pub struct Header {
 }
 
 pub struct Node<B> {
-    pub header: LayoutVerified<B, Header>,
+    pub header: Ref<B, Header>,
     pub body: B,
 }
 
 impl<B: ByteSlice> Node<B> {
     pub fn new(bytes: B) -> Self {
-        let (header, body) = LayoutVerified::new_from_prefix(bytes).expect("node must be aligned");
+        let (header, body) = Ref::new_from_prefix(bytes).expect("node must be aligned");
         Self { header, body }
     }
 }
